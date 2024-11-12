@@ -1,0 +1,10 @@
+# SERVICE DISCOVERY / EUREKA SERVER: ayudara a tener un catalogo de todas las piezas de mi infraestructura
+
+application:
+  name: tutorial-eureka
+server:
+  port: 8761
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false

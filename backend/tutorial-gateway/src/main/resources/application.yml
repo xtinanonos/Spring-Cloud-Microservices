@@ -1,0 +1,43 @@
+# GATEWAY es la puerta de acceso a todos los micro servicios,
+# Es el encargado de redirigir las solicitudes
+# Centraliza las peticiones en un único punto y permite hacer de balanceo de carga, seguridad, etc.
+server:
+  port: 8080
+eureka: #configuracion del cliente de Eureka --> registro cliente y obtención de info del catalogo
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  application:
+    name: spring-cloud-eureka-client-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin   # Elimina encabezaos duplicados en rutas HTTP
+      globalcors: # Configuración global para todas las rutas:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"   # Permite solicitudes desde cualquier origen
+            allowedMethods: "*"   # Permite todos los métodos HTTP
+            allowedHeaders: "*"   # Permite todos los encabezados HTTP
+      routes:
+        - id: category
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-CATEGORY   # URI del microservicio al que se redirigirá. lb:// indica que se utilizará el balanceador de carga
+          predicates:
+            - Path=/category/**   # rutas parciales que deben coincidir para redirigir las solicitudes a los microservicios
+        - id: author
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-AUTHOR
+          predicates:
+            - Path=/author/**
+        - id: game
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-GAME
+          predicates:
+            - Path=/game/**
+        - id: client
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-CLIENT
+          predicates:
+            - Path=/client/**
+        - id: loan
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-LOAN
+          predicates:
+            - Path=/loan/**
